@@ -285,12 +285,12 @@ N/A — standalone-проект (не существующая продакшн-
 - [x] Task 1.3: unit-тесты на детерминизм и период 0 — Medium (4h)
 **Validation Checkpoint:** ✅ `uv run pytest` — 5 passed; ruff чист; регрессия `cohort_analysis.py` + `tableau_export.py` без изменений.
 
-### Phase 2: Tableau Public Publish (week 3–4)
+### Phase 2: Tableau Public Publish (in progress — 2026-09-04)
 **Goal:** дашборд доступен по публичной ссылке.
 **Tasks:**
-- [ ] Task 2.1: сборка workbook с вью из README + встраивание данных (REQ-011) — Medium (6h)
-- [ ] Task 2.2: публикация на Tableau Public, документирование URL в README (REQ-011) — Small (2h)
-**Validation Checkpoint:** публичная ссылка открывается, вью соответствуют README.
+- [x] Task 2.1: рецепт сборки 4 вью + дашборда в README (REQ-011) — Medium (6h)
+- [ ] Task 2.2: публикация на Tableau Public, URL в README (REQ-011) — Small (2h) — PENDING: ручной шаг в Tableau Public Desktop (аккаунт)
+**Validation Checkpoint:** публичная ссылка открывается, вью соответствуют README. Частично: рецепт готов; публикация ждёт пользователя.
 
 ### Phase 3: Automation & Dashboard Package (week 5–6)
 **Goal:** self-serve дашборд с автообновлением.

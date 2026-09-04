@@ -78,6 +78,41 @@ uv run python tableau_export.py
 Rows = `cohort_label` (или `cohort_month`), Marks = Square, Color = AVG(`is_active`),
 Text = `% of Total` по строке. Либо `period_date` на Columns для календарной оси.
 
+## Tableau Public: дашборд и публикация
+
+Сборка 4-вью дашборда в Tableau Public Desktop и публикация по публичной ссылке.
+
+**0. Подготовка данных**
+
+```bash
+uv run python tableau_export.py    # обновить tableau/cohort_extract.hyper
+open tableau/cohort_extract.hyper  # открыть Tableau Public Desktop с данными
+```
+
+**1. Подключение данных**
+
+- Tableau Public Desktop → *Connect to Data → Tableau Extract* → выбрать
+  `tableau/cohort_extract.hyper`. Либо открыть `.hyper` двойным кликом.
+
+**2. Четыре вью (листы)**
+
+| Лист | Тип | Поля |
+|---|---|---|
+| Retention heatmap | Square | Columns = `period`, Rows = `cohort_label`, Color = AVG(`is_active`), Text = `% of Total` (по строке) |
+| Cohort sizes | Bar | Columns = `cohort_label`, Rows = COUNTD(`user_id`), Filter = `period` = 0 |
+| Retention curves | Line | Columns = `period`, Rows = AVG(`is_active`), Color = `cohort_label` |
+| LTV | Bar | Columns = `cohort_label`, Rows = SUM(`revenue`) / COUNTD(`user_id`) |
+
+**3. Дашборд**
+
+- New Dashboard → 4 листа тайлами (heatmap крупнее, остальные в ряд).
+- Заголовок «Cohort Retention & LTV»; опционально фильтр по `cohort_label`.
+
+**4. Публикация**
+
+- *File → Save to Tableau Public* → вход в аккаунт (бесплатно) → Publish.
+- Ссылка вида `https://public.tableau.com/views/<name>/...` — вставить в README.
+
 ## Структура проекта
 
 ```
