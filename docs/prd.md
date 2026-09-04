@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Портфельный кейс по когортному анализу удержания и LTV: полностью воспроизводимый Python-пайплайн (pandas + matplotlib/seaborn) на детерминированных синтетических данных плюс выгрузка, готовая к загрузке в Tableau (CSV + Hyper-экстракт). Текущее состояние реализовано и верифицировано; документ фиксирует его как спеку (retro) и описывает road-map: подключение реальных данных, публикация на Tableau Server/Cloud, автоматизация и готовый dashboard-package.
+Портфельный кейс по когортному анализу удержания и LTV: полностью воспроизводимый Python-пайплайн (pandas + matplotlib/seaborn) на детерминированных синтетических данных плюс выгрузка, готовая к загрузке в Tableau (CSV + Hyper-экстракт). Текущее состояние реализовано и верифицировано; документ фиксирует его как спеку (retro) и описывает road-map: подключение реальных данных (CSV), публикация на Tableau Public, автоматизация и готовый workbook.
 
 ## 2. Problem Statement
 
@@ -47,7 +47,7 @@
 - **Метод измерения:** `print_summary` из `cohort_analysis.py`; unit-проверка детерминизма.
 
 ### Goal 3: Tableau-publication (road-map)
-- **Описание:** дашборд доступен по публичной ссылке (Tableau Public/Cloud).
+- **Описание:** дашборд доступен по публичной ссылке (Tableau Public).
 - **Метрика:** наличие опубликованного workbook.
 - **Baseline:** нет публичной ссылки; только локальные `cohort_export.csv` + `.hyper`.
 - **Target:** опубликован ≥ 1 дашборд (retention heatmap + LTV), ссылка в README.
@@ -163,7 +163,7 @@ df = generate_data(cfg)  # 1000 users, треугольная история, 6 
 ### Should Have (P1) — road-map, Phase 1–2
 
 #### REQ-010: Адаптер реального источника данных
-**Описание:** источник данных выносится за `generate_data()`: чтение CSV/БД в тот же `user_id × period`-формат, метрическая модель не меняется.
+**Описание:** источник данных выносится за `generate_data()`: чтение CSV в тот же `user_id × period`-формат, метрическая модель не меняется.
 
 **Acceptance Criteria:**
 - [ ] Функция-адаптер `load_real_data(path) -> pd.DataFrame` возвращает контракт REQ-001 (6 колонок)
@@ -173,16 +173,17 @@ df = generate_data(cfg)  # 1000 users, треугольная история, 6 
 
 **Dependencies:** REQ-001, REQ-002, REQ-003
 
-#### REQ-011: Публикация на Tableau Server/Cloud
-**Описание:** `.hyper` + workbook публикуются через `tableau-server-client`; либо публикация на Tableau Public.
+#### REQ-011: Публикация на Tableau Public
+**Описание:** workbook с вью из README публикуется на Tableau Public (Save to Tableau Public из Desktop либо Public REST API); данные встроены в workbook.
 
 **Acceptance Criteria:**
-- [ ] Публикация `.hyper` на целевой платформе проходит успешно (HTTP 201/200)
-- [ ] Вью из README (heatmap, размеры, кривые, LTV) присутствуют в опубликованном workbook
-- [ ] Учётные данные не хранятся в коде (env-переменные / секрет-менеджер)
+- [ ] Workbook публикуется на Tableau Public и открывается по публичной ссылке
+- [ ] Вью из README (heatmap, размеры, кривые, LTV) присутствуют в опубликованном дашборде
+- [ ] Данные встроены в workbook (embedded .hyper/CSV) — дашборд не зависит от локальных файлов
+- [ ] Учётные данные Tableau Public не хранятся в коде (Desktop-сессия / env)
 - [ ] README дополнен ссылкой на опубликованный дашборд
 
-**Dependencies:** REQ-004; внешний сервис (лицензия Tableau Cloud/Server либо бесплатный Tableau Public)
+**Dependencies:** REQ-004; внешний сервис (бесплатный Tableau Public, данные публичны)
 
 ### Nice to Have (P2) — road-map, Phase 3
 
@@ -196,15 +197,16 @@ df = generate_data(cfg)  # 1000 users, треугольная история, 6 
 
 **Dependencies:** REQ-010, REQ-011
 
-#### REQ-021: Готовый dashboard-package (.twbx)
-**Описание:** упакованный dashboard с каноническими вью и параметрами (переключатель когорт/периодов).
+#### REQ-021: Готовый workbook-дашборд
+**Описание:** workbook с каноническими вью и параметрами (переключатель когорт/периодов), данные из .hyper/CSV.
 
 **Acceptance Criteria:**
-- [ ] .twbx открывается без внешних данных (данные внутри)
+- [ ] Workbook открывается в Tableau Desktop/Public с подключением к .hyper/CSV
 - [ ] Минимум 4 вью: heatmap удержания, размеры когорт, кривые удержания, LTV
 - [ ] Параметры дашборда (порог периодов, диапазон когорт) изменяются в UI Tableau
+- [ ] Workbook публикуется на Tableau Public (связка с REQ-011)
 
-**Dependencies:** REQ-004, REQ-010
+**Dependencies:** REQ-004, REQ-010, REQ-011
 
 ## 6. Non-Functional Requirements
 
@@ -248,13 +250,13 @@ tableau/cohort_extract.hyper
 ### Технологический стек
 - **Backend (аналитика):** Python ≥ 3.10, pandas ≥ 2.0, numpy, matplotlib, seaborn
 - **Data:** синтетика (seed=42); road-map — CSV/Postgres (REQ-010)
-- **Export:** tableauhyperapi (Hyper Extract), roadmap — tableau-server-client (REQ-011)
+- **Export:** tableauhyperapi (Hyper Extract); road-map — публикация на Tableau Public (REQ-011)
 - **Infrastructure:** uv + pyproject.toml + .python-version; road-map — GitHub Actions scheduler (REQ-020)
 - **Notebook:** jupyter + ipykernel (kernel_name=cohort-py)
 
 ### Внешние зависимости
 1. **Tableau Hyper API (`tableauhyperapi`):** сборка `.hyper`. Rate limit — нет (локально). Fallback: только CSV (уже реализован).
-2. **Tableau Cloud/Server (road-map):** публикация `.hyper`+workbook. Требует лицензию. Fallback: Tableau Public (бесплатно).
+2. **Tableau Public (road-map):** публикация workbook с встроенными данными. Бесплатно, данные публичны. Публикация через Desktop «Save to Tableau Public» или Public REST API.
 
 ### Миграция
 N/A — standalone-проект (не существующая продакшн-система). Для road-map: расширение пайплайна обратимо (адаптер не трогает метрики).
@@ -283,18 +285,18 @@ N/A — standalone-проект (не существующая продакшн-
 - [ ] Task 1.3: unit-тесты на детерминизм и период 0 — Medium (4h)
 **Validation Checkpoint:** реальный CSV → та же retention-матрица и LTV; метрики без изменений.
 
-### Phase 2: Tableau Publish (week 3–4)
-**Goal:** дашборд доступен по ссылке.
+### Phase 2: Tableau Public Publish (week 3–4)
+**Goal:** дашборд доступен по публичной ссылке.
 **Tasks:**
-- [ ] Task 2.1: публикация `.hyper` и workbook (REQ-011) — Medium (6h)
-- [ ] Task 2.2: секреты через env, документирование URL в README (REQ-011) — Small (2h)
+- [ ] Task 2.1: сборка workbook с вью из README + встраивание данных (REQ-011) — Medium (6h)
+- [ ] Task 2.2: публикация на Tableau Public, документирование URL в README (REQ-011) — Small (2h)
 **Validation Checkpoint:** публичная ссылка открывается, вью соответствуют README.
 
 ### Phase 3: Automation & Dashboard Package (week 5–6)
 **Goal:** self-serve дашборд с автообновлением.
 **Tasks:**
 - [ ] Task 3.1: scheduler/job регенерации (REQ-020) — Large (10h)
-- [ ] Task 3.2: .twbx dashboard-package (REQ-021) — Medium (8h)
+- [ ] Task 3.2: workbook-дашборд с параметрами (REQ-021) — Medium (8h)
 **Validation Checkpoint:** дашборд обновляется по расписанию; .twbx открывается автономно.
 
 ### Зависимости задач
@@ -321,28 +323,25 @@ Critical Path: REQ-010 → REQ-011 → REQ-020
 
 ### Open Questions
 #### Q1: Целевая платформа публикации
-- **Статус:** открыт
-- **Варианты:** (A) Tableau Public — бесплатно, без лицензии, публично; (B) Tableau Cloud/Server — приватно, нужна лицензия; (C) только локальные артефакты
-- **Владелец:** автор
-- **Влияние:** High (меняет объём REQ-011)
+- **Статус:** resolved (2026-09-04)
+- **Решение:** (A) Tableau Public — бесплатно, публично
+- **Влияние:** REQ-011 переписан под Tableau Public
 
 #### Q2: Источник реальных данных
-- **Статус:** открыт
-- **Варианты:** (A) CSV-экспорт; (B) Postgres/SQL; (C) API-источник
-- **Владелец:** автор
-- **Влияние:** Medium (форма REQ-010)
+- **Статус:** resolved (2026-09-04)
+- **Решение:** (A) CSV-экспорт
+- **Влияние:** REQ-010 — адаптер `load_real_data(path)` для CSV
 
 #### Q3: Формат дашборда
-- **Статус:** открыт
-- **Варианты:** (A) отдельный workbook; (B) .twbx-пакет; (C) и то и другое
-- **Владелец:** автор
-- **Влияние:** Low
+- **Статус:** resolved (2026-09-04)
+- **Решение:** (A) отдельный workbook
+- **Влияние:** REQ-021 — workbook, не .twbx
 
 ### Risks & Mitigation
 
 | Риск | Вероятность | Влияние | Severity | Митигация | Контингенция |
 |------|-------------|---------|----------|-----------|--------------|
-| Публикация требует платную лицензию Tableau | Medium | High | **High** | Tableau Public как fallback (бесплатно) | Держать локальные CSV/.hyper + инструкцию |
+| Tableau Public: данные публичны, лимиты (10 GB, 1.5M rows) | Medium | Medium | Medium | Синтетика/обезличенные данные; проверка перед публикацией | Держать локальные CSV/.hyper + инструкцию |
 | Смена API Tableau Hyper/Server ломает export | Medium | Medium | Medium | Пин версий в uv.lock; CI-прогон export | Вернуться к CSV-only ветке |
 | Реальные данные «грязные» (пропуски, дубли) | High | Medium | **High** | Валидация формата в адаптере (REQ-010) | Документированные ограничения входных данных |
 | LTV младших когорт занижен из-за короткой истории | High | Low | Medium | Сравнение только равных «возрастов» (уже в README) | Фильтр «возраст когорты» в дашборде |
@@ -358,10 +357,10 @@ Critical Path: REQ-010 → REQ-011 → REQ-020
 
 ### Checkpoint 2: Конец Phase 2
 **Критерии:**
-- [ ] Ссылка на опубликованный дашборд открывается в браузере
+- [ ] Публичная ссылка Tableau Public открывается в браузере
 - [ ] На дашборде видны heatmap, размеры когорт, кривые удержания, LTV
 - [ ] README содержит актуальный URL
-**Если провален:** переключиться на Tableau Public; проверить права публикации.
+**Если провален:** проверить аккаунт/права Tableau Public; пересобрать workbook.
 
 ### Checkpoint 3: Конец Phase 3
 **Критерии:**
