@@ -277,13 +277,13 @@ N/A — standalone-проект (не существующая продакшн-
 - [x] uv-среда + README (REQ-006)
 **Validation Checkpoint:** `uv run python cohort_analysis.py` и `uv run python tableau_export.py` проходят; heatmap собирается в Tableau. ✅
 
-### Phase 1: Real Data Adapter (week 1–2)
+### Phase 1: Real Data Adapter (DONE — 2026-09-04)
 **Goal:** пайплайн работает на реальном источнике.
 **Tasks:**
-- [ ] Task 1.1: функция `load_real_data()` + контракт 6 колонок (REQ-010) — Medium (6h)
-- [ ] Task 1.2: PII-scrub и валидация формата (REQ-010) — Medium (4h)
-- [ ] Task 1.3: unit-тесты на детерминизм и период 0 — Medium (4h)
-**Validation Checkpoint:** реальный CSV → та же retention-матрица и LTV; метрики без изменений.
+- [x] Task 1.1: функция `load_real_data()` + контракт 6 колонок (REQ-010) — Medium (6h)
+- [x] Task 1.2: PII-scrub и валидация формата (REQ-010) — Medium (4h)
+- [x] Task 1.3: unit-тесты на детерминизм и период 0 — Medium (4h)
+**Validation Checkpoint:** ✅ `uv run pytest` — 5 passed; ruff чист; регрессия `cohort_analysis.py` + `tableau_export.py` без изменений.
 
 ### Phase 2: Tableau Public Publish (week 3–4)
 **Goal:** дашборд доступен по публичной ссылке.
@@ -373,4 +373,4 @@ Critical Path: REQ-010 → REQ-011 → REQ-020
 
 **Конец PRD**
 
-*Статус текущего scope: Verified (Phase 0 done, прогон команд + верификация в README). Road-map фазы — Inferred, требуют реализации.*
+*Статус: Phase 0 + Phase 1 Verified (pytest 5 passed, ruff clean, регрессия зелёная). Phase 2–3 — Inferred, требуют реализации.*
