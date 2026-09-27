@@ -2902,8 +2902,8 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "matplotlib", specifier = ">=3.7" },
-    { name = "numpy", specifier = ">=1.24" },
-    { name = "pandas", specifier = ">=2.0" },
+    { name = "numpy", specifier = ">=1.26" },
+    { name = "pandas", specifier = ">=2.2" },
     { name = "seaborn", specifier = ">=0.12" },
     { name = "tableauhyperapi", specifier = ">=0.0.22100" },
 ]

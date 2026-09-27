@@ -3,7 +3,14 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 .ruff_cache/
-# Tableau Hyper process log + Hyper extracts are build artifacts; regenerate
-# via `uv run python tableau_export.py`.
+.pytest_cache/
+
+# macOS
+.DS_Store
+
+# Generated artifacts — regenerate via `uv run python tableau_export.py`
+# (the notebook no longer writes its own copy).
 hyperd.log
 tableau/*.hyper
+tableau/cohort_export.csv
+cohort_data.csv

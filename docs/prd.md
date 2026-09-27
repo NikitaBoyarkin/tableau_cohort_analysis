@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Портфельный кейс по когортному анализу удержания и LTV: полностью воспроизводимый Python-пайплайн (pandas + matplotlib/seaborn) на детерминированных синтетических данных плюс выгрузка, готовая к загрузке в Tableau (CSV + Hyper-экстракт). Текущее состояние реализовано и верифицировано; документ фиксирует его как спеку (retro) и описывает road-map: подключение реальных данных (CSV), публикация на Tableau Public, автоматизация и готовый workbook.
+Портфельный кейс по когортному анализу удержания и LTV: полностью воспроизводимый Python-пайплайн (pandas + matplotlib/seaborn) на детерминированных синтетических данных плюс выгрузка, готовая к загрузке в Tableau (CSV + Hyper-экстракт). Текущее состояние реализовано и верифицировано; документ фиксирует его как спеку (retro) и описывает roadmap: подключение реальных данных (CSV), публикация на Tableau Public, автоматизация и готовый workbook.
 
 ## 2. Problem Statement
 
@@ -36,7 +36,7 @@
 - **Baseline:** 2 команды (`uv sync --all-groups` → `uv run python tableau_export.py`), < 2 мин.
 - **Target:** ≤ 2 команды, ≤ 2 мин (сохраняется).
 - **Срок:** достигнуто (2026-08).
-- **Метод измерения:** ручной прогон команд на чистом клоне; CI-проверка не требуется.
+- **Метод измерения:** автоматическая проверка в CI — `.github/workflows/ci.yml` на каждый push в `main` и каждый PR прогоняет `ruff check .`, `pytest` и smoke-прогон пайплайна (`cohort_analysis.py` + `tableau_export.py` + проверка наличия CSV и `.hyper`).
 
 ### Goal 2: Методологическая корректность retention/LTV
 - **Описание:** метрики соответствуют канону когортного анализа.
@@ -46,7 +46,7 @@
 - **Срок:** достигнуто (2026-08).
 - **Метод измерения:** `print_summary` из `cohort_analysis.py`; unit-проверка детерминизма.
 
-### Goal 3: Tableau-publication (road-map)
+### Goal 3: Tableau-publication (roadmap)
 - **Описание:** дашборд доступен по публичной ссылке (Tableau Public).
 - **Метрика:** наличие опубликованного workbook.
 - **Baseline:** нет публичной ссылки; только локальные `cohort_export.csv` + `.hyper`.
@@ -57,7 +57,7 @@
 ## 4. User Stories
 
 ### Story 1: Демонстрация компетенции (портфолио)
-**As a** hiring-manager/nterviewer, **I want to** увидеть когортное удержание и LTV с чистыми viz в Tableau, **So that I can** оценить data-storytelling и методологию кандидата.
+**As a** hiring-manager/interviewer, **I want to** увидеть когортное удержание и LTV с чистыми viz в Tableau, **So that I can** оценить data-storytelling и методологию кандидата.
 
 **Acceptance Criteria:**
 - [ ] README объясняет модель данных и методологию за < 3 мин чтения
@@ -74,9 +74,9 @@
 - [ ] Смена источника (синтетика → CSV) меняет один адаптер, не трогая метрики
 - [ ] Schema export-фрейма стабильна (имена/типы колонок фиксированы)
 
-**Dependencies:** REQ-010 (road-map)
+**Dependencies:** REQ-010 (roadmap)
 
-### Story 3: Self-serve дашборд (road-map)
+### Story 3: Self-serve дашборд (roadmap)
 **As a** стейкхолдер, **I want to** смотреть когортное удержание без запуска скриптов, **So that I can** отслеживать динамику когорт ежемесячно.
 
 **Acceptance Criteria:**
@@ -84,14 +84,14 @@
 - [ ] Вью соответствуют README: heatmap, размеры когорт, кривые, LTV
 - [ ] Ссылка/URL стабильная для шаринга
 
-**Dependencies:** REQ-020, REQ-021 (road-map)
+**Dependencies:** REQ-020, REQ-021 (roadmap)
 
 ## 5. Functional Requirements
 
 ### Must Have (P0) — реализовано
 
 #### REQ-001: Детерминированная генерация синтетических когортных данных
-**Описание:** `generate_data()` создаёт строку «пользователь × месяц наблюдения» с триангулярной матрицей (младшие когорты наблюдаются меньше месяцев).
+**Описание:** `generate_data()` создаёт строку «пользователь × месяц наблюдения» с треугольной матрицей (младшие когорты наблюдаются меньше месяцев).
 
 **Acceptance Criteria:**
 - [ ] `seed=42` → повторный вызов возвращает идентичный `pd.DataFrame` (`df.equals` == True)
@@ -111,10 +111,10 @@ df = generate_data(cfg)  # 1000 users, треугольная история, 6 
 **Описание:** размеры когорт, retention-матрица (когорта × период) и blended-кривая удержания.
 
 **Acceptance Criteria:**
-- [ ] `cohort_sizes()` возвращает число уникальных `user_id` по когорте, считая только `period == 0`
+- [ ] `cohort_sizes()` возвращает число уникальных `user_id` по когорте, считая только `period == 0`; при отсутствии `period == 0` строк поднимает `ValueError` (а не падает с `KeyError` ниже по стеку)
 - [ ] `retention_matrix()` — период 0 равен 1.0 (100 %) по определению
 - [ ] NaN-ячейки (когорта ещё не наблюдалась) остаются NaN и маскируются в viz
-- [ ] `retention_curves()` — среднее по когортам на период (blended)
+- [ ] `retention_curves()` — blended-кривая: активные строки / все строки на период (взвешено размером когорт, **не** невзвешенное среднее по когортам; для среднего по когортам — `retention_matrix(df).mean()`)
 
 **Dependencies:** REQ-001
 
@@ -122,9 +122,10 @@ df = generate_data(cfg)  # 1000 users, треугольная история, 6 
 **Описание:** общая выручка, ARPU и LTV по когортам кумулятивно по всей наблюдаемой истории.
 
 **Acceptance Criteria:**
-- [ ] `revenue_by_cohort()` возвращает `users`, `total_revenue`, `arpu`, `ltv` на когорту
-- [ ] ARPU = `revenue.mean()`; LTV = `total_revenue / users`
-- [ ] Сравнение LTV корректно только для когорт одинакового «возраста» (задокументировано)
+- [ ] `revenue_by_cohort()` возвращает `users`, `total_revenue`, `arpu_monthly`, `periods`, `ltv` на когорту
+- [ ] `arpu_monthly` = `revenue.mean()` — выручка на user-МЕСЯЦ (неактивные месяцы входят нулём), не на пользователя; `periods` = наблюдённые периоды на пользователя
+- [ ] LTV = `total_revenue / users`, кумулятивно по наблюдённому окну когорты — растёт с возрастом когорты и **не сопоставим** между когортами
+- [ ] `ltv_at_k(df, k=3)` — LTV с фиксированным горизонтом (периоды `0..k-1`), сопоставим между когортами; когорты с меньшим числом наблюдённых периодов возвращаются как `NaN` (исключаются, не зануляются)
 - [ ] Выручка неактивного месяца = 0 (реализовано в данных)
 
 **Dependencies:** REQ-001
@@ -135,17 +136,19 @@ df = generate_data(cfg)  # 1000 users, треугольная история, 6 
 **Acceptance Criteria:**
 - [ ] CSV содержит 8 колонок со стабильными именами: `user_id, cohort_month, cohort_label, join_date, period, period_date, is_active, revenue`
 - [ ] `cohort_label` — строка `%Y-%m`; `period_date` — фактический календарный месяц наблюдения
-- [ ] `.hyper` строится через официальный `tableauhyperapi` и открывается через «Connect to Data → Tableau Extract»
+- [ ] `.hyper` строится через официальный `tableauhyperapi` и открывается через «Connect to Data → Tableau Extract»; телеметрия отключена (`telemetry="false"`)
+- [ ] Все целочисленные колонки — `int64`, Hyper-типы — `BIG_INT` (без сужения типов: ранее `revenue` как `int32` переполнялся, 3e9 → отрицательное)
+- [ ] `build_export_frame(df=...)` принимает любой источник по 6-колоночному контракту (включая `load_real_data()`); NaN в кадре и несовпадение имён/порядка колонок ловит `write_hyper()` (не `build_export_frame`) — то есть на выгрузке, а не на сборке кадра
 - [ ] При отсутствии `tableauhyperapi` скрипт graceful-degradation: CSV пишется, `.hyper` пропускается с сообщением `[skip]`
 
 **Dependencies:** REQ-001
 
 #### REQ-005: Визуализация метрик в ноутбуке
-**Описание:** `tableau_cohort_analysis.ipynb` — 14 ячеек (markdown-нарратив + изолированные шаги): retention heatmap, кривые удержания, размеры когорт, ARPU/LTV.
+**Описание:** `tableau_cohort_analysis.ipynb` — 16 ячеек (markdown-нарратив + изолированные шаги): retention heatmap, кривые удержания, размеры когорт, ARPU/LTV.
 
 **Acceptance Criteria:**
 - [ ] Heatmap не рендерит `nan%` в пустых ячейках (NaN замаскированы)
-- [ ] Ноутбук исполняем: `nbconvert --execute --kernl_name=cohort-py` проходит end-to-end
+- [ ] Ноутбук исполняем: `nbconvert --execute --ExecutePreprocessor.kernel_name=cohort-py` проходит end-to-end
 - [ ] Каждый график снабжён выводом-интерпретацией в markdown
 
 **Dependencies:** REQ-001, REQ-002, REQ-003
@@ -160,16 +163,22 @@ df = generate_data(cfg)  # 1000 users, треугольная история, 6 
 
 **Dependencies:** None
 
-### Should Have (P1) — road-map, Phase 1–2
+### Should Have (P1) — roadmap, Phase 1–2
 
 #### REQ-010: Адаптер реального источника данных
 **Описание:** источник данных выносится за `generate_data()`: чтение CSV в тот же `user_id × period`-формат, метрическая модель не меняется.
 
 **Acceptance Criteria:**
-- [ ] Функция-адаптер `load_real_data(path) -> pd.DataFrame` возвращает контракт REQ-001 (6 колонок)
-- [ ] `cohort_sizes/retention_matrix/revenue_by_cohort` работают без изменений на реальных данных
-- [ ] PII-поля отсутствуют или scrub'атся (GDPR)
+- [x] Функция-адаптер `load_real_data(path) -> pd.DataFrame` возвращает контракт REQ-001 (6 колонок)
+- [x] `cohort_sizes/retention_matrix/revenue_by_cohort` работают без изменений на реальных данных
+- [x] PII-поля отсутствуют или scrub'атся (GDPR) — whitelist из 6 колонок в `load_real_data()`
 - [ ] Документировано требование: период 0 = 100 % только если это месяц регистрации, иначе определение уточняется
+
+**Статус реализации:** адаптер подключён к выгрузке — `tableau_export.build_export_frame(df=...)`
+принимает выход `load_real_data()` (один аргумент, метрики и схема export-фрейма не меняются).
+**Не сделано:** CLI/argparse для выбора источника не добавлялся — переключение выполняется
+программно (см. пример в README, раздел «Реальные данные»), отдельной команды вида
+`--source real` не существует.
 
 **Dependencies:** REQ-001, REQ-002, REQ-003
 
@@ -185,7 +194,7 @@ df = generate_data(cfg)  # 1000 users, треугольная история, 6 
 
 **Dependencies:** REQ-004; внешний сервис (бесплатный Tableau Public, данные публичны)
 
-### Nice to Have (P2) — road-map, Phase 3
+### Nice to Have (P2) — roadmap, Phase 3
 
 #### REQ-020: Автоматизация регенерации отчётов
 **Описание:** генерация данных → расчёт метрик → export → публикация по расписанию (scheduler/GitHub Actions).
@@ -249,20 +258,20 @@ tableau/cohort_extract.hyper
 
 ### Технологический стек
 - **Backend (аналитика):** Python ≥ 3.10, pandas ≥ 2.0, numpy, matplotlib, seaborn
-- **Data:** синтетика (seed=42); road-map — CSV/Postgres (REQ-010)
-- **Export:** tableauhyperapi (Hyper Extract); road-map — публикация на Tableau Public (REQ-011)
-- **Infrastructure:** uv + pyproject.toml + .python-version; road-map — GitHub Actions scheduler (REQ-020)
+- **Data:** синтетика (seed=42); roadmap — CSV/Postgres (REQ-010)
+- **Export:** tableauhyperapi (Hyper Extract); roadmap — публикация на Tableau Public (REQ-011)
+- **Infrastructure:** uv + pyproject.toml + .python-version; roadmap — GitHub Actions scheduler (REQ-020)
 - **Notebook:** jupyter + ipykernel (kernel_name=cohort-py)
 
 ### Внешние зависимости
 1. **Tableau Hyper API (`tableauhyperapi`):** сборка `.hyper`. Rate limit — нет (локально). Fallback: только CSV (уже реализован).
-2. **Tableau Public (road-map):** публикация workbook с встроенными данными. Бесплатно, данные публичны. Публикация через Desktop «Save to Tableau Public» или Public REST API.
+2. **Tableau Public (roadmap):** публикация workbook с встроенными данными. Бесплатно, данные публичны. Публикация через Desktop «Save to Tableau Public» или Public REST API.
 
 ### Миграция
-N/A — standalone-проект (не существующая продакшн-система). Для road-map: расширение пайплайна обратимо (адаптер не трогает метрики).
+N/A — standalone-проект (не существующая продакшн-система). Для roadmap: расширение пайплайна обратимо (адаптер не трогает метрики).
 
 ### Тестирование
-- Unit: `cohort_analysis.py` — детерминизм, период 0 = 1.0, треугольность (добавить `tests/`)
+- Unit: `tests/` — 34 теста: `test_cohort_analysis.py` (13: детерминизм, период 0 = 1.0, треугольность, `ltv_at_k`), `test_real_data.py` (12: строгая валидация CSV), `test_tableau_export.py` (9: схема export-фрейма, `.hyper`, отказ на NaN/дрейфе колонок)
 - Integration: полный прогон `cohort_analysis.py` + `tableau_export.py` end-to-end
 - Manual: загрузка `.hyper`/CSV в Tableau и сборка heatmap по инструкции README
 
@@ -283,7 +292,7 @@ N/A — standalone-проект (не существующая продакшн-
 - [x] Task 1.1: функция `load_real_data()` + контракт 6 колонок (REQ-010) — Medium (6h)
 - [x] Task 1.2: PII-scrub и валидация формата (REQ-010) — Medium (4h)
 - [x] Task 1.3: unit-тесты на детерминизм и период 0 — Medium (4h)
-**Validation Checkpoint:** ✅ `uv run pytest` — 5 passed; ruff чист; регрессия `cohort_analysis.py` + `tableau_export.py` без изменений.
+**Validation Checkpoint:** ✅ `uv run pytest` — 34 passed (12 `real_data` + 13 `cohort_analysis` + 9 `tableau_export`); `uv run ruff check .` чист; регрессия `cohort_analysis.py` + `tableau_export.py` без изменений.
 
 ### Phase 2: Tableau Public Publish (in progress — 2026-09-04)
 **Goal:** дашборд доступен по публичной ссылке.
@@ -350,9 +359,9 @@ Critical Path: REQ-010 → REQ-011 → REQ-020
 
 ### Checkpoint 1: Конец Phase 1
 **Критерии:**
-- [ ] Реальный CSV проходит через `load_real_data()` без ручной правки
-- [ ] `retention_matrix`/`revenue_by_cohort` дают те же типы выходов, что на синтетике
-- [ ] `uv run pytest` зелёный (детерминизм, период 0 = 1.0)
+- [x] Реальный CSV проходит через `load_real_data()` без ручной правки
+- [x] `retention_matrix`/`revenue_by_cohort` дают те же типы выходов, что на синтетике
+- [x] `uv run pytest` зелёный (детерминизм, период 0 = 1.0)
 **Если провален:** уточнить контракт данных; скорректировать адаптер.
 
 ### Checkpoint 2: Конец Phase 2
@@ -373,4 +382,4 @@ Critical Path: REQ-010 → REQ-011 → REQ-020
 
 **Конец PRD**
 
-*Статус: Phase 0 + Phase 1 Verified (pytest 5 passed, ruff clean, регрессия зелёная). Phase 2–3 — Inferred, требуют реализации.*
+*Статус: Phase 0 + Phase 1 Verified (pytest 34 passed, ruff clean, CI зелёный). Phase 2–3 — Inferred, требуют реализации.*
