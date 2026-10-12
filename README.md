@@ -2,6 +2,44 @@
 
 [![CI](https://github.com/NikitaBoyarkin/tableau_cohort_analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/NikitaBoyarkin/tableau_cohort_analysis/actions/workflows/ci.yml)
 
+> Когортный анализ удержания и LTV на синтетике (seed=42): пайплайн на Python + готовая выгрузка в Tableau (CSV + `.hyper`), 34 теста.
+
+## Навигация
+- 🌐 [Портфолио](https://nikitaboyarkin.github.io)
+- 🏦 [Флагманский кейс: Volta neobank](https://github.com/NikitaBoyarkin/volta-banking)
+- 🧪 Связанные: [rfm-analysis-of-bank-clients](https://github.com/NikitaBoyarkin/rfm-analysis-of-bank-clients) · [sql-analytics-case-study](https://github.com/NikitaBoyarkin/sql-analytics-case-study) · [churn-prediction](https://github.com/NikitaBoyarkin/churn-prediction)
+
+**На этой странице:** [Ситуация](#ситуация) · [Задача](#задача) · [Действия](#действия) · [Результат](#результат) · [Метрики](#метрики) · [Tableau](#tableau) · [Структура проекта](#структура-проекта) · [Ограничения](#ограничения)
+
+## Ситуация
+
+Удержание и монетизацию нельзя оценивать «в среднем по больнице»: разные
+когорты прихода живут по-разному, и без разбивки по месяцам регистрации кривая
+оттока и LTV читаются неверно. Проект берёт синтетический лог активности,
+чтобы показать корректную когортную модель и довести её до выгрузки в BI.
+
+## Задача
+
+Собрать воспроизводимый когортный пайплайн (удержание, кривые оттока,
+выручка/ARPU/LTV по когортам) и подготовить плоскую выгрузку, готовую к
+загрузке в **Tableau**.
+
+## Действия
+
+- Данные генерируются детерминированно (`seed=42`): `retention(p) = 0.85 · 0.75^(p-1)`, выручка активного месяца — `Poisson(λ=10)`.
+- Метрики по когортам: `retention_matrix()`, blended `retention_curves()`, `revenue_by_cohort()`, `ltv_at_k(df, k=3)`.
+- Строгая fail-fast валидация реального CSV по 6-колоночному контракту, PII-колонки отбрасываются whitelist'ом (`real_data.py`).
+- Выгрузка в Tableau: `cohort_export.csv` + `cohort_extract.hyper` через Hyper API, телеметрия выключена.
+- Ноутбук-нарратив (16 ячеек) и CI (ruff + pytest + smoke-прогон пайплайна).
+
+## Результат
+
+- **period 0 = 100 %** — удержание по определению; кривая убывает с периода 1.
+- **34 теста** — 12 `real_data` + 13 `cohort_analysis` + 9 `tableau_export`.
+- **6 колонок контракта** — смена источника это один аргумент, схема выгрузки не меняется.
+- **CSV + `.hyper`** — плоская таблица для Tableau и локальный Hyper-экстракт.
+- **`ltv_at_k(df, k=3)`** — LTV с фиксированным горизонтом, сопоставимый между когортами.
+
 Когортный анализ на синтетических данных: удержание пользователей, кривые
 оттока и выручка/LTV по когортам прихода. Пайплайн на Python (pandas +
 matplotlib/seaborn) плюс выгрузка, готовая к загрузке в **Tableau**.
