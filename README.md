@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/NikitaBoyarkin/tableau_cohort_analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/NikitaBoyarkin/tableau_cohort_analysis/actions/workflows/ci.yml)
 
-> Когортный анализ удержания и LTV на синтетике (seed=42): пайплайн на Python + готовая выгрузка в Tableau (CSV + `.hyper`), 34 теста.
+> Когортный анализ удержания и LTV на синтетике (seed=42): пайплайн на Python + готовая выгрузка в Tableau (CSV + `.hyper`), 39 тестов.
 
 ## Навигация
 - 🌐 [Портфолио](https://nikitaboyarkin.github.io)
@@ -35,7 +35,7 @@
 ## Результат
 
 - **period 0 = 100 %** — удержание по определению; кривая убывает с периода 1.
-- **34 теста** — 12 `real_data` + 13 `cohort_analysis` + 9 `tableau_export`.
+- **39 тестов** — 16 `real_data` + 14 `cohort_analysis` + 9 `tableau_export`.
 - **6 колонок контракта** — смена источника это один аргумент, схема выгрузки не меняется.
 - **CSV + `.hyper`** — плоская таблица для Tableau и локальный Hyper-экстракт.
 - **`ltv_at_k(df, k=3)`** — LTV с фиксированным горизонтом, сопоставимый между когортами.
@@ -151,7 +151,7 @@ uv run python cohort_analysis.py   # текстовый summary метрик
 uv run jupyter notebook            # открыть tableau_cohort_analysis.ipynb
 ```
 
-Проверка качества (34 теста: 12 `real_data` + 13 `cohort_analysis` + 9 `tableau_export`):
+Проверка качества (39 тестов: 16 `real_data` + 14 `cohort_analysis` + 9 `tableau_export`):
 
 ```bash
 uv run pytest                      # 34 passed
@@ -280,7 +280,7 @@ tableau_cohort_analysis/
 | Экспорт умел только синтетику | `build_export_frame(df=...)` принимает любой источник по 6-колоночному контракту |
 | `period` — `int8`, `revenue` — `int32` (переполнение: 3e9 → отрицательное) | всё `int64`, Hyper-колонки `BIG_INT` |
 | Телеметрия Tableau отправлялась при каждой сборке `.hyper` | `telemetry="false"` |
-| 5 тестов | 34 теста (12 + 13 + 9) |
+| 5 тестов | 39 тестов (16 + 14 + 9) |
 | Нет лицензии и CI | `LICENSE` (MIT) + `.github/workflows/ci.yml` |
 
 ## Ограничения
