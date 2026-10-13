@@ -1,0 +1,313 @@
+{
+  "shape": [
+    5469,
+    6
+  ],
+  "columns": [
+    "user_id",
+    "cohort_month",
+    "join_date",
+    "period",
+    "is_active",
+    "revenue"
+  ],
+  "users": 1000,
+  "cohorts": 10,
+  "period_min": 0,
+  "period_max": 9,
+  "join_date_range": [
+    "2023-01-01",
+    "2023-10-01"
+  ],
+  "max_periods_per_cohort": "{Timestamp('2023-01-01 00:00:00'): 9, Timestamp('2023-02-01 00:00:00'): 8, Timestamp('2023-03-01 00:00:00'): 7, Timestamp('2023-04-01 00:00:00'): 6, Timestamp('2023-05-01 00:00:00'): 5, Timestamp('2023-06-01 00:00:00'): 4, Timestamp('2023-07-01 00:00:00'): 3, Timestamp('2023-08-01 00:00:00'): 2, Timestamp('2023-09-01 00:00:00'): 1, Timestamp('2023-10-01 00:00:00'): 0}",
+  "validity_checks": {
+    "is_active_in_0_1": true,
+    "period_non_negative": true,
+    "revenue_non_negative": true,
+    "all_integer": true,
+    "no_full_dup_rows": true,
+    "no_dup_user_period": true,
+    "exactly_one_period0_per_user": true,
+    "cohort_month_eq_join_date": true,
+    "join_date_is_month_start": true,
+    "revenue_zero_iff_inactive": true
+  },
+  "period0_retention": 1.0,
+  "cohort_sizes": {
+    "2023-01": 97,
+    "2023-02": 116,
+    "2023-03": 86,
+    "2023-04": 77,
+    "2023-05": 115,
+    "2023-06": 105,
+    "2023-07": 100,
+    "2023-08": 108,
+    "2023-09": 93,
+    "2023-10": 103
+  },
+  "cohort_size_total": 1000,
+  "retention_matrix": {
+    "2023-01": {
+      "0": 1.0,
+      "1": 0.8351,
+      "2": 0.5773,
+      "3": 0.3918,
+      "4": 0.3299,
+      "5": 0.2165,
+      "6": 0.2165,
+      "7": 0.1753,
+      "8": 0.0722,
+      "9": 0.0928
+    },
+    "2023-02": {
+      "0": 1.0,
+      "1": 0.8103,
+      "2": 0.6552,
+      "3": 0.4569,
+      "4": 0.3448,
+      "5": 0.2586,
+      "6": 0.1724,
+      "7": 0.1121,
+      "8": 0.1207,
+      "9": null
+    },
+    "2023-03": {
+      "0": 1.0,
+      "1": 0.8605,
+      "2": 0.6628,
+      "3": 0.4884,
+      "4": 0.3256,
+      "5": 0.3023,
+      "6": 0.186,
+      "7": 0.186,
+      "8": null,
+      "9": null
+    },
+    "2023-04": {
+      "0": 1.0,
+      "1": 0.8442,
+      "2": 0.6753,
+      "3": 0.4416,
+      "4": 0.4416,
+      "5": 0.2987,
+      "6": 0.2338,
+      "7": null,
+      "8": null,
+      "9": null
+    },
+    "2023-05": {
+      "0": 1.0,
+      "1": 0.8609,
+      "2": 0.6522,
+      "3": 0.4957,
+      "4": 0.3826,
+      "5": 0.2609,
+      "6": null,
+      "7": null,
+      "8": null,
+      "9": null
+    },
+    "2023-06": {
+      "0": 1.0,
+      "1": 0.8667,
+      "2": 0.6286,
+      "3": 0.4667,
+      "4": 0.3429,
+      "5": null,
+      "6": null,
+      "7": null,
+      "8": null,
+      "9": null
+    },
+    "2023-07": {
+      "0": 1.0,
+      "1": 0.87,
+      "2": 0.58,
+      "3": 0.54,
+      "4": null,
+      "5": null,
+      "6": null,
+      "7": null,
+      "8": null,
+      "9": null
+    },
+    "2023-08": {
+      "0": 1.0,
+      "1": 0.8333,
+      "2": 0.5648,
+      "3": null,
+      "4": null,
+      "5": null,
+      "6": null,
+      "7": null,
+      "8": null,
+      "9": null
+    },
+    "2023-09": {
+      "0": 1.0,
+      "1": 0.828,
+      "2": null,
+      "3": null,
+      "4": null,
+      "5": null,
+      "6": null,
+      "7": null,
+      "8": null,
+      "9": null
+    },
+    "2023-10": {
+      "0": 1.0,
+      "1": null,
+      "2": null,
+      "3": null,
+      "4": null,
+      "5": null,
+      "6": null,
+      "7": null,
+      "8": null,
+      "9": null
+    }
+  },
+  "blended_curve": {
+    "0": 1.0,
+    "1": 0.845,
+    "2": 0.6231,
+    "3": 0.4698,
+    "4": 0.3591,
+    "5": 0.2648,
+    "6": 0.1995,
+    "7": 0.1538,
+    "8": 0.0986,
+    "9": 0.0928
+  },
+  "theoretical_curve": {
+    "0": 1.0,
+    "1": 0.85,
+    "2": 0.6375,
+    "3": 0.4781,
+    "4": 0.3586,
+    "5": 0.2689,
+    "6": 0.2017,
+    "7": 0.1513,
+    "8": 0.1135,
+    "9": 0.0851
+  },
+  "curve_abs_diff": {
+    "0": 0.0,
+    "1": 0.005,
+    "2": 0.0144,
+    "3": 0.0083,
+    "4": 0.0005,
+    "5": 0.0042,
+    "6": 0.0022,
+    "7": 0.0026,
+    "8": 0.0149,
+    "9": 0.0077
+  },
+  "revenue_by_cohort": {
+    "2023-01": {
+      "users": 97.0,
+      "total_revenue": 3669.0,
+      "arpu_monthly": 3.7825,
+      "periods": 10.0,
+      "ltv": 37.8247
+    },
+    "2023-02": {
+      "users": 116.0,
+      "total_revenue": 4578.0,
+      "arpu_monthly": 4.3851,
+      "periods": 9.0,
+      "ltv": 39.4655
+    },
+    "2023-03": {
+      "users": 86.0,
+      "total_revenue": 3408.0,
+      "arpu_monthly": 4.9535,
+      "periods": 8.0,
+      "ltv": 39.6279
+    },
+    "2023-04": {
+      "users": 77.0,
+      "total_revenue": 3038.0,
+      "arpu_monthly": 5.6364,
+      "periods": 7.0,
+      "ltv": 39.4545
+    },
+    "2023-05": {
+      "users": 115.0,
+      "total_revenue": 4201.0,
+      "arpu_monthly": 6.0884,
+      "periods": 6.0,
+      "ltv": 36.5304
+    },
+    "2023-06": {
+      "users": 105.0,
+      "total_revenue": 3582.0,
+      "arpu_monthly": 6.8229,
+      "periods": 5.0,
+      "ltv": 34.1143
+    },
+    "2023-07": {
+      "users": 100.0,
+      "total_revenue": 2979.0,
+      "arpu_monthly": 7.4475,
+      "periods": 4.0,
+      "ltv": 29.79
+    },
+    "2023-08": {
+      "users": 108.0,
+      "total_revenue": 2506.0,
+      "arpu_monthly": 7.7346,
+      "periods": 3.0,
+      "ltv": 23.2037
+    },
+    "2023-09": {
+      "users": 93.0,
+      "total_revenue": 1701.0,
+      "arpu_monthly": 9.1452,
+      "periods": 2.0,
+      "ltv": 18.2903
+    },
+    "2023-10": {
+      "users": 103.0,
+      "total_revenue": 1061.0,
+      "arpu_monthly": 10.301,
+      "periods": 1.0,
+      "ltv": 10.301
+    }
+  },
+  "ltv_at_k3": {
+    "2023-01": 23.2784,
+    "2023-02": 24.6983,
+    "2023-03": 25.2209,
+    "2023-04": 25.1039,
+    "2023-05": 24.7478,
+    "2023-06": 25.3714,
+    "2023-07": 24.4,
+    "2023-08": 23.2037,
+    "2023-09": null,
+    "2023-10": null
+  },
+  "ltv_at_k3_mean": 24.5031,
+  "ltv_at_k3_n_defined": 8,
+  "total_revenue": 30723,
+  "revenue_active_mean": 9.9718,
+  "revenue_active_median": 10.0,
+  "revenue_zero_share": 0.4366,
+  "regen_shape": [
+    5469,
+    6
+  ],
+  "seed42_reproduces_csv": true,
+  "formula_fit": {
+    "base_retention_exp_a": 0.8357,
+    "decay_exp_b": 0.7509,
+    "r_squared": 0.9945
+  },
+  "tests": {
+    "test_cohort_analysis.py": 14,
+    "test_real_data.py": 16,
+    "test_tableau_export.py": 9,
+    "total": 39
+  }
+}
