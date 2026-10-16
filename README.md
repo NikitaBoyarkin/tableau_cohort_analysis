@@ -154,7 +154,7 @@ uv run jupyter notebook            # открыть tableau_cohort_analysis.ipyn
 Проверка качества (39 тестов: 16 `real_data` + 14 `cohort_analysis` + 9 `tableau_export`):
 
 ```bash
-uv run pytest                      # 34 passed
+uv run pytest                      # 39 passed
 uv run ruff check .                # чисто для всех .py
 ```
 
@@ -234,6 +234,7 @@ open tableau/cohort_extract.hyper  # открыть Tableau Public Desktop с д
 ```
 tableau_cohort_analysis/
 ├── cohort_analysis.py            # генерация данных + функции метрик (+ CLI summary)
+├── generate_cohort_data.py       # детерминированный писатель cohort_data.csv (seed 42)
 ├── real_data.py                  # строгий загрузчик реального CSV по контракту
 ├── tableau_export.py             # Tableau-выгрузка: CSV + .hyper extract
 ├── tableau_cohort_analysis.ipynb # нарратив: генерация → метрики → viz → выводы
@@ -252,8 +253,16 @@ tableau_cohort_analysis/
 ```
 
 `cohort_data.csv` и `tableau/cohort_export.csv` — **генерируемые** артефакты:
-они не хранятся в git (см. `.gitignore`) и воспроизводятся из кода
-(`cohort_analysis.py` / `tableau_export.py`).
+они не хранятся в git (см. `.gitignore`) и воспроизводятся из кода.
+
+`cohort_data.csv` пишет `generate_cohort_data.py` — детерминированно (seed 42),
+байт-в-байт; повторный прогон даёт тот же файл:
+
+```bash
+uv run python generate_cohort_data.py        # → ./cohort_data.csv
+```
+
+`tableau/cohort_export.csv` пишет `tableau_export.py` (он же собирает `.hyper`).
 
 ## Что было улучшено
 

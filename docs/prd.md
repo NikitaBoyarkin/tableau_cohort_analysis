@@ -271,7 +271,7 @@ tableau/cohort_extract.hyper
 N/A — standalone-проект (не существующая продакшн-система). Для roadmap: расширение пайплайна обратимо (адаптер не трогает метрики).
 
 ### Тестирование
-- Unit: `tests/` — 34 теста: `test_cohort_analysis.py` (13: детерминизм, период 0 = 1.0, треугольность, `ltv_at_k`), `test_real_data.py` (12: строгая валидация CSV), `test_tableau_export.py` (9: схема export-фрейма, `.hyper`, отказ на NaN/дрейфе колонок)
+- Unit: `tests/` — 39 тестов: `test_cohort_analysis.py` (14: детерминизм, период 0 = 1.0, треугольность, `ltv_at_k`), `test_real_data.py` (16: строгая валидация CSV), `test_tableau_export.py` (9: схема export-фрейма, `.hyper`, отказ на NaN/дрейфе колонок)
 - Integration: полный прогон `cohort_analysis.py` + `tableau_export.py` end-to-end
 - Manual: загрузка `.hyper`/CSV в Tableau и сборка heatmap по инструкции README
 
@@ -292,7 +292,7 @@ N/A — standalone-проект (не существующая продакшн-
 - [x] Task 1.1: функция `load_real_data()` + контракт 6 колонок (REQ-010) — Medium (6h)
 - [x] Task 1.2: PII-scrub и валидация формата (REQ-010) — Medium (4h)
 - [x] Task 1.3: unit-тесты на детерминизм и период 0 — Medium (4h)
-**Validation Checkpoint:** ✅ `uv run pytest` — 34 passed (12 `real_data` + 13 `cohort_analysis` + 9 `tableau_export`); `uv run ruff check .` чист; регрессия `cohort_analysis.py` + `tableau_export.py` без изменений.
+**Validation Checkpoint:** ✅ `uv run pytest` — 39 passed (16 `real_data` + 14 `cohort_analysis` + 9 `tableau_export`); `uv run ruff check .` чист; регрессия `cohort_analysis.py` + `tableau_export.py` без изменений.
 
 ### Phase 2: Tableau Public Publish (in progress — 2026-09-04)
 **Goal:** дашборд доступен по публичной ссылке.
@@ -382,4 +382,4 @@ Critical Path: REQ-010 → REQ-011 → REQ-020
 
 **Конец PRD**
 
-*Статус: Phase 0 + Phase 1 Verified (pytest 34 passed, ruff clean, CI зелёный). Phase 2–3 — Inferred, требуют реализации.*
+*Статус: Phase 0 + Phase 1 Verified (pytest 39 passed, ruff clean, CI зелёный). Phase 2–3 — Inferred, требуют реализации.*
