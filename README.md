@@ -9,6 +9,8 @@
 - 🏦 [Флагманский кейс: Volta neobank](https://github.com/NikitaBoyarkin/volta-banking)
 - 🧪 Связанные: [rfm-analysis-of-bank-clients](https://github.com/NikitaBoyarkin/rfm-analysis-of-bank-clients) · [sql-analytics-case-study](https://github.com/NikitaBoyarkin/sql-analytics-case-study) · [churn-prediction](https://github.com/NikitaBoyarkin/churn-prediction)
 
+**▶ [Диаграмма: Детерминированный когортный пайплайн → Tableau](docs/diagrams/tableau-cohort-analysis.html)** — открывается в браузере, без установки и сборки
+
 **На этой странице:** [Ситуация](#ситуация) · [Задача](#задача) · [Действия](#действия) · [Результат](#результат) · [Метрики](#метрики) · [Tableau](#tableau) · [Структура проекта](#структура-проекта) · [Ограничения](#ограничения)
 
 ## Ситуация
