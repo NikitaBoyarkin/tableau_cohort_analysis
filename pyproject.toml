@@ -21,6 +21,9 @@ dev = [
     "ruff>=0.6",
 ]
 
+[project.optional-dependencies]
+tabpy = ["tabpy>=2.16"]
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
