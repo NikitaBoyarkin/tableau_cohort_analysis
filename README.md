@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/NikitaBoyarkin/tableau_cohort_analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/NikitaBoyarkin/tableau_cohort_analysis/actions/workflows/ci.yml)
 
-> Когортный анализ удержания и LTV на синтетике (seed=42): пайплайн на Python + готовая выгрузка в Tableau (CSV + `.hyper`), 39 тестов.
+> Когортный анализ удержания и LTV на синтетике (seed=42): пайплайн на Python + готовая выгрузка в Tableau (CSV + `.hyper`), 65 тестов.
 
 ## Навигация
 - 🌐 [Портфолио](https://nikitaboyarkin.github.io)
@@ -37,7 +37,7 @@
 ## Результат
 
 - **period 0 = 100 %** — удержание по определению; кривая убывает с периода 1.
-- **39 тестов** — 16 `real_data` + 14 `cohort_analysis` + 9 `tableau_export`.
+- **65 тестов** — 16 `real_data` + 14 `cohort_analysis` + 9 `tableau_export` + 26 `tabpy_functions`.
 - **6 колонок контракта** — смена источника это один аргумент, схема выгрузки не меняется.
 - **CSV + `.hyper`** — плоская таблица для Tableau и локальный Hyper-экстракт.
 - **`ltv_at_k(df, k=3)`** — LTV с фиксированным горизонтом, сопоставимый между когортами.
@@ -153,10 +153,10 @@ uv run python cohort_analysis.py   # текстовый summary метрик
 uv run jupyter notebook            # открыть tableau_cohort_analysis.ipynb
 ```
 
-Проверка качества (39 тестов: 16 `real_data` + 14 `cohort_analysis` + 9 `tableau_export`):
+Проверка качества (65 тестов: 16 `real_data` + 14 `cohort_analysis` + 9 `tableau_export` + 26 `tabpy_functions`):
 
 ```bash
-uv run pytest                      # 39 passed
+uv run pytest                      # 65 passed
 uv run ruff check .                # чисто для всех .py
 ```
 
@@ -316,7 +316,7 @@ uv run python generate_cohort_data.py        # → ./cohort_data.csv
 | Экспорт умел только синтетику | `build_export_frame(df=...)` принимает любой источник по 6-колоночному контракту |
 | `period` — `int8`, `revenue` — `int32` (переполнение: 3e9 → отрицательное) | всё `int64`, Hyper-колонки `BIG_INT` |
 | Телеметрия Tableau отправлялась при каждой сборке `.hyper` | `telemetry="false"` |
-| 5 тестов | 39 тестов (16 + 14 + 9) |
+| 5 тестов | 65 тестов (16 + 14 + 9 + 26) |
 | Нет лицензии и CI | `LICENSE` (MIT) + `.github/workflows/ci.yml` |
 
 ## Ограничения
