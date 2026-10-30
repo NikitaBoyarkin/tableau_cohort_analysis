@@ -107,6 +107,13 @@ def test_wilson_zero_successes_edge_case() -> None:
     assert 0.0 < high < 1.0
 
 
+def test_wilson_all_successes_edge_case() -> None:
+    low = assert_clean_list(wilson_lower(10, 10))[0]
+    high = assert_clean_list(wilson_upper(10, 10))[0]
+    assert high == 1.0
+    assert 0.0 < low < 1.0
+
+
 def test_wilson_zero_trials_is_none() -> None:
     assert wilson_lower(0, 0) == [None]
     assert wilson_upper(5, 0) == [None]

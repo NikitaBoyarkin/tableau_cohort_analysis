@@ -150,7 +150,16 @@ def _wilson(
         denom = 1.0 + z * z / n
         center = (p_hat + z * z / (2.0 * n)) / denom
         half = z * math.sqrt(p_hat * (1.0 - p_hat) / n + z * z / (4.0 * n * n)) / denom
-        bounds.append((min(1.0, max(0.0, center - half)), min(1.0, max(0.0, center + half))))
+        low = center - half
+        high = center + half
+        # At p_hat == 0 (or 1) center and half are mathematically equal, so the
+        # difference carries only rounding noise whose sign depends on the build's
+        # inv_cdf. Pin the boundary exactly instead of trusting max() to absorb it.
+        if s <= 0.0:
+            low = 0.0
+        if s >= n:
+            high = 1.0
+        bounds.append((min(1.0, max(0.0, low)), min(1.0, max(0.0, high))))
     return bounds
 
 
