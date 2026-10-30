@@ -120,7 +120,7 @@ def fig3_retention_curve(df: pd.DataFrame) -> None:
         color="#C44E52",
         label=r"Theory: $0.85 \cdot 0.75^{\,p-1}$",
     )
-    for x, y in zip(p, curve.to_numpy()):
+    for x, y in zip(p, curve.to_numpy(), strict=True):
         if x > 0:
             ax.annotate(
                 f"{y:.1%}",
